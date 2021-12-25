@@ -1,6 +1,8 @@
 
 > Open this page at [https://mintgenie.github.io/christmas_wishes/](https://mintgenie.github.io/christmas_wishes/)
 
+https://youtu.be/C07I4nzKu5I 
+
 ## Use as Extension
 
 This repository can be added as an **extension** in MakeCode.
