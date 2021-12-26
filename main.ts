@@ -1,8 +1,9 @@
 function Init_Trees () {
     tree_1 = [
-    [7, 8],
-    [7, 8],
+    [0, 7, 8],
+    [1, 7, 8],
     [
+    2,
     1,
     2,
     7,
@@ -11,6 +12,7 @@ function Init_Trees () {
     14
     ],
     [
+    3,
     2,
     3,
     4,
@@ -25,6 +27,7 @@ function Init_Trees () {
     13
     ],
     [
+    4,
     3,
     4,
     5,
@@ -37,6 +40,7 @@ function Init_Trees () {
     12
     ],
     [
+    5,
     4,
     5,
     6,
@@ -47,6 +51,7 @@ function Init_Trees () {
     11
     ],
     [
+    6,
     5,
     6,
     7,
@@ -55,6 +60,7 @@ function Init_Trees () {
     10
     ],
     [
+    7,
     3,
     4,
     5,
@@ -67,6 +73,7 @@ function Init_Trees () {
     12
     ],
     [
+    8,
     4,
     5,
     6,
@@ -77,6 +84,7 @@ function Init_Trees () {
     11
     ],
     [
+    9,
     5,
     6,
     7,
@@ -85,6 +93,7 @@ function Init_Trees () {
     10
     ],
     [
+    10,
     4,
     5,
     6,
@@ -95,6 +104,7 @@ function Init_Trees () {
     11
     ],
     [
+    11,
     5,
     6,
     7,
@@ -103,52 +113,36 @@ function Init_Trees () {
     10
     ],
     [
+    12,
     6,
     7,
     8,
     9
     ],
-    [7, 8],
-    [7, 8],
-    [7]
+    [13, 7, 8],
+    [14, 7, 8],
+    [15, 7]
     ]
-    stem = [[7, 8], [7, 8], [7, 8]]
+    stem = [[0, 7, 8], [1, 7, 8], [2, 7, 8]]
     ornaments = [
-    [8],
-    [1, 14],
-    [7],
-    [10],
-    [6],
-    [9],
-    [2, 13],
-    [5],
-    [8],
-    [3, 12],
-    [9],
-    [6],
-    [9],
-    [6],
-    [7],
-    [8]
+    [0, 8],
+    [1, 1, 14],
+    [2, 7],
+    [3, 10],
+    [4, 6],
+    [5, 9],
+    [6, 2, 13],
+    [7, 5],
+    [8, 8],
+    [9, 3, 12],
+    [10, 9],
+    [11, 6],
+    [12, 9],
+    [13, 6],
+    [14, 7],
+    [15, 8]
     ]
-    star = [
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [20],
-    [7, 8],
-    [7, 8]
-    ]
+    star = [[14, 7, 8], [15, 7, 8]]
 }
 function showStar (flip: boolean) {
     if (flip) {
@@ -270,6 +264,7 @@ function shooting_star () {
         }
         basic.pause(100)
         strip.clear()
+        serial.writeValue("--------------shooting--------------", star_X)
     }
 }
 function matrix_disp (xpos: number, ypos: number, max_width: number, Color_idx: number, color_val: boolean) {
@@ -284,6 +279,9 @@ function matrix_disp (xpos: number, ypos: number, max_width: number, Color_idx: 
         strip.setPixelColor(pixel_id, neopixel.rgb(randint(0, 255), randint(0, 255), randint(0, 255)))
     }
 }
+input.onButtonPressed(Button.B, function () {
+    begin = true
+})
 function drawline (x1pos: number, y1pos: number, x2pos: number, y2pos: number, Max_Width: number) {
     x_next = x1pos
     y_next = y1pos
@@ -345,23 +343,24 @@ function show_my_bitmap (coloridx: number, bitmap_idx: number) {
     } else if (bitmap_idx == 3) {
         map_to_disp = star
     }
-    arr_d0_idx = 0
+    arr_row_idx = 0
     serial.writeValue("----------------------------", 0)
     for (let element of map_to_disp) {
-        arr_d1_idx = 0
-        serial.writeValue(" x", arr_d0_idx)
-        while (element.length != arr_d1_idx) {
-            serial.writeValue("    y", arr_d1_idx)
-            matrix_disp(arr_d0_idx, element[arr_d1_idx], 16, coloridx, fixed_clr)
-            arr_d1_idx += 1
+        arr_row_idx = element[0]
+        serial.writeValue(" x", arr_row_idx)
+        serial.writeValue("num pixels", element.length - 1)
+        arr_col_idx = 1
+        while (element.length != arr_col_idx) {
+            serial.writeValue("    y", element[arr_col_idx])
+            matrix_disp(arr_row_idx, element[arr_col_idx], 16, coloridx, fixed_clr)
+            arr_col_idx += 1
         }
-        arr_d0_idx += 1
     }
     strip.show()
 }
 let init_done = false
-let arr_d1_idx = 0
-let arr_d0_idx = 0
+let arr_col_idx = 0
+let arr_row_idx = 0
 let map_to_disp: number[][] = []
 let fixed_clr = false
 let Star_Y = 0
@@ -379,6 +378,9 @@ let x_iter = 0
 let color = 0
 let pixel_id = 0
 let strip: neopixel.Strip = null
+let begin = false
+begin = true
+radio.setGroup(5)
 // tree_1 = [[0]]
 let WIDTH = 16
 let HEIGHT = 16
@@ -395,7 +397,7 @@ strip.clear()
 pixel_id = 0
 color = neopixel.rgb(randint(0, 255), randint(0, 255), randint(0, 255))
 x_iter = 5
-serial.writeValue("----------------------------", 0)
+serial.writeValue("----------------Init------------", 0)
 Color_list = [
 neopixel.colors(NeoPixelColors.Red),
 neopixel.colors(NeoPixelColors.Orange),
@@ -416,14 +418,16 @@ basic.forever(function () {
     basic.showIcon(IconNames.Diamond)
 })
 basic.forever(function () {
-    color = neopixel.rgb(randint(0, 255), randint(0, 255), randint(0, 255))
-    matrix.scrollText(
-    "MERRY CHRISTMAS",
-    20,
-    1,
-    color
-    )
-    matrix.show()
+    if (begin) {
+        color = neopixel.rgb(randint(0, 255), randint(0, 255), randint(0, 255))
+        matrix.scrollText(
+        "MERRY CHRISTMAS",
+        20,
+        1,
+        color
+        )
+        matrix.show()
+    }
 })
 basic.forever(function () {
     if (init_done) {
@@ -437,10 +441,12 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
-    init_done = false
-    shooting_star()
-    show_my_bitmap(3, 0)
-    show_my_bitmap(BROWN_CLR_IDX, 1)
-    init_done = true
-    basic.pause(12500)
+    if (begin) {
+        init_done = false
+        shooting_star()
+        show_my_bitmap(3, 0)
+        show_my_bitmap(BROWN_CLR_IDX, 1)
+        init_done = true
+        basic.pause(12500)
+    }
 })
